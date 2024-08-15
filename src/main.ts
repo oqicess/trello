@@ -1,3 +1,4 @@
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -11,7 +12,7 @@ async function start() {
         .addBearerAuth()
         .build();
     const app = await NestFactory.create(AppModule);
-    
+
     const document = SwaggerModule.createDocument(app, docs);
     SwaggerModule.setup('/api/docs', app, document);
 
@@ -20,7 +21,9 @@ async function start() {
         credentials: true,
     });
 
-    await app.listen(PORT, ()=> console.log(`Server started on port = ${PORT}`));
+    await app.listen(PORT, () =>
+        console.log(`Server started on port = ${PORT}`),
+    );
 }
 
 start();
