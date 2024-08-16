@@ -1,9 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEmail, IsString, Length, MinLength } from 'class-validator';
+import { IsEmail, IsString, MinLength } from 'class-validator';
 
 export class LoginUserDto {
     @ApiPropertyOptional({ example: 'oqicess@trello.ru' })
-    @IsString({ message: 'Должно быть строкой' })
     @IsEmail({}, { message: 'Неправильный формат логина' })
     readonly email: string;
 
