@@ -6,7 +6,7 @@ export class RegisterUserDto {
 
     @ApiPropertyOptional({ example: '12345678' })
     readonly password: string;
-    
+
     @ApiPropertyOptional({ example: 'oqicess' })
     readonly name: string;
 }
