@@ -1,12 +1,28 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
+import * as bcrypt from 'bcryptjs';
+import { UserDto } from './user.dto';
+import { Cards } from 'src/cards/cards.model';
+import { Comments } from 'src/comments/comments.model';
+import { Columns } from 'src/column/column.model';
 
 @Injectable()
 export class UserService {
     constructor(@InjectModel(User) private userRepository: typeof User) {}
 
-    async getUserByEmail(email: string): Promise<User> {
+    getById(id: number): Promise<User> {
+        return this.userRepository.findOne({
+            where: { id: id },
+            attributes: ['id', 'email', 'name', 'createdAt'],
+            include: [
+                { model: Columns, include: [{ model: Cards }] },
+                { model: Comments },
+            ],
+        });
+    }
+
+    getUserByEmail(email: string): Promise<User> {
         return this.userRepository.findOne({
             where: {
                 email: email,
@@ -35,5 +51,15 @@ export class UserService {
                 HttpStatus.INTERNAL_SERVER_ERROR,
             );
         }
+    }
+
+    async update(id: number, dto: UserDto) {
+        let data = dto;
+
+        if (dto.password) {
+            data = { ...dto, password: await bcrypt.hash(dto.password, 5) };
+        }
+
+        return this.userRepository.update(data, { where: { id: id } });
     }
 }
