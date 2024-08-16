@@ -3,7 +3,13 @@ import { User } from './user/user.model';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { SequelizeModule } from "@nestjs/sequelize";
+import { SequelizeModule } from '@nestjs/sequelize';
+import { ColumnModule } from './column/column.module';
+import { CardsModule } from './cards/cards.module';
+import { CommentsModule } from './comments/comments.module';
+import { Columns } from './column/column.model';
+import { Cards } from './cards/cards.model';
+import { Comments } from './comments/comments.model';
 
 @Module({
     imports: [
@@ -17,14 +23,15 @@ import { SequelizeModule } from "@nestjs/sequelize";
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            models: [
-                User,
-            ],
+            models: [User, Columns, Cards, Comments],
             autoLoadModels: true,
-            logging: false
+            logging: false,
         }),
         AuthModule,
         UserModule,
+        ColumnModule,
+        CardsModule,
+        CommentsModule,
     ],
     controllers: [],
     providers: [],
