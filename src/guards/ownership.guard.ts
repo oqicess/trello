@@ -8,6 +8,9 @@ import {
 import { ColumnService } from '../column/column.service';
 import { CommentsService } from '../comments/comments.service';
 import { CardsService } from '../cards/cards.service';
+import { Comments } from '../comments/comments.model';
+import { Cards } from '../cards/cards.model';
+import { Columns } from '../column/column.model';
 
 @Injectable()
 export class ColumnOwnershipGuard implements CanActivate {
@@ -21,11 +24,11 @@ export class ColumnOwnershipGuard implements CanActivate {
         const req = context.switchToHttp().getRequest();
         const userId = parseInt(req.params.userId);
         const columnId = req.params.id;
-        const [controller, user, type, id] = req.path
+        const [api, controller, user, type, id] = req.path
             .split('/')
             .filter(Boolean);
 
-        let entity;
+        let entity: Columns | Comments | Cards;
         switch (type) {
             case 'columns':
                 entity = await this.columnService.findByPk(columnId);
@@ -41,7 +44,7 @@ export class ColumnOwnershipGuard implements CanActivate {
         }
 
         if (!entity) {
-            throw new NotFoundException('Сущность не найдена');
+            throw new NotFoundException('Объект не найден');
         }
 
         if (entity.userId !== userId) {
