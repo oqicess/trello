@@ -1,4 +1,3 @@
-import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -13,6 +12,7 @@ async function start() {
         .build();
     const app = await NestFactory.create(AppModule);
 
+    app.setGlobalPrefix('api');
     const document = SwaggerModule.createDocument(app, docs);
     SwaggerModule.setup('/api/docs', app, document);
 
