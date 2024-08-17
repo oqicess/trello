@@ -35,6 +35,7 @@ export class AuthController {
 
     @ApiOperation({ summary: 'Регистрация пользователя' })
     @Post('/registration')
+    @UsePipes(ValidationPipe)
     async registration(@Body() dto: RegisterUserDto): Promise<HttpStatus> {
         await this.authService.registration(dto);
 
