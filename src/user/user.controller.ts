@@ -1,11 +1,4 @@
-import {
-    Body,
-    Controller,
-    Get,
-    Param,
-    Patch,
-    UsePipes,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, UsePipes } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
     ApiBearerAuth,
@@ -17,15 +10,11 @@ import { Auth } from '../decorators/auth.decorator';
 import { CurrentUser } from '../decorators/user.decorator';
 import { UserDto } from './user.dto';
 import { ValidationPipe } from '../pipes/validation.pipe';
-import { ColumnService } from '../column/column.service';
 
-@ApiTags('user-controller')
-@Controller('user')
+@ApiTags('users-controller')
+@Controller('users')
 export class UserController {
-    constructor(
-        private userService: UserService,
-        private columnService: ColumnService,
-    ) {}
+    constructor(private userService: UserService) {}
 
     @ApiOperation({ summary: 'Получение профиля' })
     @ApiBearerAuth()
@@ -45,29 +34,10 @@ export class UserController {
     }
 
     @ApiOperation({ summary: 'Получение профиля по индентификатору' })
-    @ApiParam({
-        name: 'id',
-        type: Number,
-        description: 'Идентификатор пользователя',
-    })
     @ApiBearerAuth()
     @Get('/:id')
     @Auth()
     async profileGetById(@Param('id') id: number) {
         return this.userService.getById(id);
-    }
-
-    @ApiOperation({
-        summary: 'Получение колонок пользователя по индентификатору',
-    })
-    @ApiParam({
-        name: 'id',
-        type: Number,
-        description: 'Идентификатор пользователя',
-    })
-    @ApiBearerAuth()
-    @Get(':id/columns')
-    async getUserColumns(@Param('id') userId: number) {
-        return this.columnService.findAll(userId);
     }
 }

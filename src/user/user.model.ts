@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Table, Column, Model, DataType, HasMany } from 'sequelize-typescript';
 import { Comments } from '../comments/comments.model';
 import { Columns } from '../column/column.model';
+import { Cards } from '../cards/cards.model';
 
 interface UserCreateAttrs {
     email: string;
@@ -44,9 +45,24 @@ export class User extends Model<User, UserCreateAttrs> {
     })
     name: string;
 
+    @ApiProperty({
+        type: () => [Columns],
+        description: 'Список колонок пользователя',
+    })
     @HasMany(() => Columns)
     columns: Columns[];
 
+    @ApiProperty({
+        type: () => [Cards],
+        description: 'Список карточек пользователя',
+    })
+    @HasMany(() => Cards)
+    cards: Cards[];
+
+    @ApiProperty({
+        type: () => [Comments],
+        description: 'Список комментариев пользователя',
+    })
     @HasMany(() => Comments)
     comments: Comments[];
 }

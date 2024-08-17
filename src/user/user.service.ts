@@ -3,9 +3,8 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
 import * as bcrypt from 'bcryptjs';
 import { UserDto } from './user.dto';
-import { Cards } from 'src/cards/cards.model';
-import { Comments } from 'src/comments/comments.model';
-import { Columns } from 'src/column/column.model';
+import { Cards } from '../cards/cards.model';
+import { Columns } from '../column/column.model';
 
 @Injectable()
 export class UserService {
@@ -15,10 +14,7 @@ export class UserService {
         return this.userRepository.findOne({
             where: { id: id },
             attributes: ['id', 'email', 'name', 'createdAt'],
-            include: [
-                { model: Columns, include: [{ model: Cards }] },
-                { model: Comments },
-            ],
+            include: [{ model: Columns, include: [{ model: Cards }] }],
         });
     }
 
