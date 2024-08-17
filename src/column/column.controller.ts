@@ -2,7 +2,6 @@ import {
     Controller,
     Post,
     Body,
-    Get,
     Param,
     Delete,
     UsePipes,
@@ -10,10 +9,11 @@ import {
     Patch,
     ParseIntPipe,
     UseGuards,
+    Get,
 } from '@nestjs/common';
 import { ColumnService } from './column.service';
 import { Auth } from '../decorators/auth.decorator';
-import { CurrentUser } from 'src/decorators/user.decorator';
+import { CurrentUser } from '../decorators/user.decorator';
 import { CreateColumnDto } from './column.dto';
 import {
     ApiBearerAuth,
@@ -22,12 +22,22 @@ import {
     ApiParam,
     ApiTags,
 } from '@nestjs/swagger';
-import { ColumnOwnershipGuard } from 'src/guards/ownership.guard';
+import { ColumnOwnershipGuard } from '../guards/ownership.guard';
 
 @ApiTags('column-controller')
 @Controller('users')
 export class ColumnController {
     constructor(private readonly columnService: ColumnService) {}
+
+    @ApiOperation({
+        summary: 'Получение колонок пользователя по индентификатору',
+    })
+    @ApiBearerAuth()
+    @UsePipes(ValidationPipe)
+    @Get(':id/columns')
+    async getUserColumns(@Param('id') userId: number) {
+        return this.columnService.findAll(userId);
+    }
 
     @ApiOperation({ summary: 'Создание колонки' })
     @UsePipes(ValidationPipe)
@@ -42,11 +52,26 @@ export class ColumnController {
     }
 
     @ApiOperation({ summary: 'Изменение колонки' })
+    @ApiParam({
+        name: 'id',
+        type: Number,
+        description: 'Идентификатор колонки',
+    })
+    @ApiParam({
+        name: 'userId',
+        type: Number,
+        description: 'Идентификатор пользователя',
+    })
     @ApiBody({ type: CreateColumnDto })
     @ApiBearerAuth()
-    @Patch('/columns/:id')
+    @Patch(':userId/columns/:id')
+    @UsePipes(ValidationPipe)
+    @UseGuards(ColumnOwnershipGuard)
     @Auth()
-    update(@Param() id: number, @Body() title: string) {
+    update(
+        @Param('id', ParseIntPipe) id: number,
+        @Body('title') title: string,
+    ) {
         return this.columnService.update(id, title);
     }
 
@@ -64,6 +89,7 @@ export class ColumnController {
     })
     @Delete(':userId/columns/:id')
     @Auth()
+    @UsePipes(ValidationPipe)
     @UseGuards(ColumnOwnershipGuard)
     async remove(
         @Param('userId', ParseIntPipe) userId: number,

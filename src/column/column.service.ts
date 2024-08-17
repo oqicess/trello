@@ -1,50 +1,48 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Columns } from './column.model';
 import { CreateColumnDto } from './column.dto';
+import { Cards } from '../cards/cards.model';
+import { Comments } from '../comments/comments.model';
 
 @Injectable()
 export class ColumnService {
     constructor(
         @InjectModel(Columns)
-        private columnRepository: typeof Columns,
+        private columnsRepository: typeof Columns,
     ) {}
 
     async findByPk(id: number): Promise<Columns> {
-        return this.columnRepository.findByPk(id);
+        return this.columnsRepository.findByPk(id);
     }
 
     async create(
         userId: number,
         createColumnDto: CreateColumnDto,
     ): Promise<Columns> {
-        return this.columnRepository.create({ ...createColumnDto, userId });
+        return this.columnsRepository.create({ ...createColumnDto, userId });
     }
 
     async findAll(userId: number): Promise<Columns[]> {
-        return this.columnRepository.findAll({ where: { userId } });
+        return this.columnsRepository.findAll({
+            where: { userId },
+            include: [{ model: Cards, include: [{ model: Comments }] }],
+        });
     }
 
-    async remove(userId: number, id: number): Promise<void> {
-        const column = await this.columnRepository.findOne({
+    async remove(userId: number, id: number): Promise<HttpStatus> {
+        const column = await this.columnsRepository.findOne({
             where: { id, userId },
         });
-        if (column) {
-            await column.destroy();
-        }
+
+        await column.destroy();
+        return HttpStatus.OK;
     }
 
-    async update(id: number, title: string) {
-        const column = await this.columnRepository.findOne({
+    async update(id: number, title: string): Promise<Columns> {
+        const column = await this.columnsRepository.findOne({
             where: { id: id },
         });
-
-        if (!column) {
-            throw new HttpException(
-                'Колонка не найдена',
-                HttpStatus.BAD_REQUEST,
-            );
-        }
 
         column.title = title;
         return column.save();

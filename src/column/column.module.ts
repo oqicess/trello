@@ -4,19 +4,17 @@ import { ColumnService } from './column.service';
 import { ColumnController } from './column.controller';
 import { Columns } from './column.model';
 import { JwtModule } from '@nestjs/jwt';
-import { AuthModule } from 'src/auth/auth.module';
-import { Comments } from 'src/comments/comments.model';
-import { Cards } from 'src/cards/cards.model';
-import { CommentsModule } from 'src/comments/comments.module';
-import { CardsModule } from 'src/cards/cards.module';
+import { AuthModule } from '../auth/auth.module';
+import { CommentsModule } from '../comments/comments.module';
+import { CardsModule } from '../cards/cards.module';
 
 @Module({
     imports: [
-        SequelizeModule.forFeature([Columns, Comments, Cards]),
+        SequelizeModule.forFeature([Columns]),
         JwtModule,
         forwardRef(() => AuthModule),
-        CommentsModule,
-        CardsModule,
+        forwardRef(() => CommentsModule),
+        forwardRef(() => CardsModule),
     ],
     providers: [ColumnService],
     controllers: [ColumnController],

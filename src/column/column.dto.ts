@@ -4,6 +4,6 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateColumnDto {
     @ApiPropertyOptional({ example: 'Заголовок' })
     @IsNotEmpty()
-    @IsString()
+    @IsString({ message: 'Должно быть строкой' })
     title: string;
 }
