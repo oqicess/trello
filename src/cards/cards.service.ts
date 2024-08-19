@@ -46,7 +46,10 @@ export class CardsService {
         });
 
         if (!cards) {
-            throw new HttpException('Колонка не найдена', HttpStatus.NOT_FOUND);
+            throw new HttpException(
+                'Карточка не найдена',
+                HttpStatus.NOT_FOUND,
+            );
         }
 
         await cards.destroy();
@@ -59,7 +62,10 @@ export class CardsService {
         });
 
         if (!cards) {
-            throw new HttpException('Колонка не найдена', HttpStatus.NOT_FOUND);
+            throw new HttpException(
+                'Карточка не найдена',
+                HttpStatus.NOT_FOUND,
+            );
         }
 
         cards.description = dto.description;

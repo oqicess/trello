@@ -38,6 +38,10 @@ export class CommentsService {
             where: { id, userId },
         });
 
+        if (!cards) {
+            throw new NotFoundException('Карточки не существует');
+        }
+
         await cards.destroy();
         return HttpStatus.OK;
     }
@@ -46,6 +50,10 @@ export class CommentsService {
         const cards = await this.commentsRepository.findOne({
             where: { id },
         });
+
+        if (!cards) {
+            throw new NotFoundException('Карточки не существует');
+        }
 
         cards.content = dto.content;
 

@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Columns } from './column.model';
 import { CreateColumnDto } from './column.dto';
@@ -35,6 +35,10 @@ export class ColumnService {
             where: { id, userId },
         });
 
+        if (!column) {
+            throw new HttpException('Колонка не найдена', HttpStatus.NOT_FOUND);
+        }
+
         await column.destroy();
         return HttpStatus.OK;
     }
@@ -43,6 +47,10 @@ export class ColumnService {
         const column = await this.columnsRepository.findOne({
             where: { id: id },
         });
+
+        if (!column) {
+            throw new HttpException('Колонка не найдена', HttpStatus.NOT_FOUND);
+        }
 
         column.title = title;
         return column.save();
