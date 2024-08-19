@@ -25,7 +25,7 @@ export class AuthService {
     async login(
         userDto: LoginUserDto,
     ): Promise<{ accessToken: string; refreshToken: string }> {
-        const user = await this.vavidateUser(userDto);
+        const user = await this.validateUser(userDto);
         return this.generateToken(user);
     }
 
@@ -64,7 +64,7 @@ export class AuthService {
         };
     }
 
-    private async vavidateUser(userDto: LoginUserDto): Promise<User> {
+    private async validateUser(userDto: LoginUserDto): Promise<User> {
         const user = await this.userService.getUserByEmail(userDto.email);
 
         if (!user) {
