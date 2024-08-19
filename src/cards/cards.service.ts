@@ -45,6 +45,10 @@ export class CardsService {
             where: { id, userId },
         });
 
+        if (!cards) {
+            throw new HttpException('Колонка не найдена', HttpStatus.NOT_FOUND);
+        }
+
         await cards.destroy();
         return HttpStatus.OK;
     }
@@ -53,6 +57,10 @@ export class CardsService {
         const cards = await this.cardsRepository.findOne({
             where: { id },
         });
+
+        if (!cards) {
+            throw new HttpException('Колонка не найдена', HttpStatus.NOT_FOUND);
+        }
 
         cards.description = dto.description;
         cards.title = dto.title;
