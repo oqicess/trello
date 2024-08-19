@@ -22,32 +22,8 @@ export class ColumnOwnershipGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const req = context.switchToHttp().getRequest();
-        const userId = parseInt(req.params.userId);
-        const columnId = req.params.id;
-        const [api, controller, user, type, id] = req.path
-            .split('/')
-            .filter(Boolean);
 
-        let entity: Columns | Comments | Cards;
-        switch (type) {
-            case 'columns':
-                entity = await this.columnService.findByPk(columnId);
-                break;
-            case 'comments':
-                entity = await this.commentService.findByPk(columnId);
-                break;
-            case 'cards':
-                entity = await this.cardService.findByPk(columnId);
-                break;
-            default:
-                throw new NotFoundException('Тип сущности не найден');
-        }
-
-        if (!entity) {
-            throw new NotFoundException('Объект не найден');
-        }
-
-        if (entity.userId !== userId) {
+        if (req.user.id !== parseInt(req.params.userId)) {
             throw new ForbiddenException('Недостаточно прав');
         }
 
